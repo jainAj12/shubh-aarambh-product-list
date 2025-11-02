@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shubh Aarambh Bill Generator</title>
+    <title>Trozo Packing Bill Generator</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -37,7 +37,6 @@
         /* Print styles */
         @media print {
             /* This rule explicitly targets the print page layout. */
-            /* While not universally respected for headers/footers, it's the standard attempt. */
             @page {
                 margin: 0;
             }
@@ -92,9 +91,12 @@
         <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div>
                 <h2 class="text-lg font-bold text-gray-700 mb-2">Billed To:</h2>
-                <input type="text" id="customer-name" placeholder="Customer Name" class="input-item w-full mb-2" value="Acme Logistics Co." required>
-                <input type="text" id="customer-address" placeholder="Address" class="input-item w-full mb-2" value="101 Innovation Drive" required>
-                <input type="text" id="customer-phone" placeholder="Phone/Email" class="input-item w-full" value="(555) 987-6543" required>
+                <!-- Customer Inputs with Values REMOVED -->
+                <input type="text" id="customer-name" placeholder="Customer Name" class="input-item w-full mb-2" value="" required>
+                <input type="text" id="customer-address" placeholder="Address" class="input-item w-full mb-2" value="" required>
+                <input type="tel" id="customer-phone" placeholder="Phone Number" class="input-item w-full mb-2" value="" required>
+                <input type="email" id="customer-email" placeholder="Email Address" class="input-item w-full" value="" required>
+                <!-- END Customer Inputs -->
             </div>
             <div class="md:text-right">
                 <div class="p-3 bg-blue-50 rounded-lg">
@@ -109,7 +111,7 @@
         </section>
 
         <!-- Item Table -->
-        <section class="mb-8">
+        <section class="mb-4">
             <h2 class="text-lg font-bold text-gray-700 mb-2">Item Details</h2>
             <div class="overflow-x-auto">
                 <table class="min-w-full bg-white rounded-lg table">
@@ -123,16 +125,16 @@
                         </tr>
                     </thead>
                     <tbody id="item-list">
-                        <!-- Default Row -->
+                        <!-- Default Row - Values cleared except for Qty/Price defaults -->
                         <tr class="item-row border-b border-gray-100 hover:bg-gray-50">
                             <td class="p-3">
-                                <input type="text" value="Heavy-Duty Cardboard Boxes (Large)" class="input-item w-full" oninput="calculateTotals()" placeholder="Item Description">
+                                <input type="text" value="" class="input-item w-full" oninput="calculateTotals()" placeholder="Item Description">
                             </td>
                             <td class="p-3">
-                                <input type="number" min="0" value="50" class="input-item w-full text-right qty-input" oninput="calculateTotals()">
+                                <input type="number" min="0" value="1" class="input-item w-full text-right qty-input" oninput="calculateTotals()">
                             </td>
                             <td class="p-3">
-                                <input type="number" min="0" value="2.50" step="0.01" class="input-item w-full text-right price-input" oninput="calculateTotals()">
+                                <input type="number" min="0" value="0.00" step="0.01" class="input-item w-full text-right price-input" oninput="calculateTotals()">
                             </td>
                             <td class="p-3 text-right font-medium total-output"></td>
                             <td class="p-3 text-center no-print">
@@ -153,6 +155,12 @@
                 </svg>
                 Add Item
             </button>
+        </section>
+
+        <!-- Notes Section -->
+        <section class="mb-8 mt-6">
+            <h3 class="text-md font-semibold text-gray-700 mb-2">Notes / Memo:</h3>
+            <textarea id="bill-notes" placeholder="e.g., Payment due in 30 days. All prices are final." class="input-item w-full h-24"></textarea>
         </section>
 
         <!-- Totals and Summary -->
