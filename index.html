@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trozo Packing Bill Generator</title>
+    <title>Shubh Aarambh Bill</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -109,7 +109,7 @@
                 </div>
             </div>
         </section>
-
+        
         <!-- Item Table -->
         <section class="mb-4">
             <h2 class="text-lg font-bold text-gray-700 mb-2">Item Details</h2>
@@ -149,35 +149,30 @@
                 </table>
             </div>
 
-            <button onclick="addRow()" class="no-print mt-4 px-4 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition duration-200 flex items-center">
+            <!-- MANUAL Add Item button now calls manualAddRow -->
+            <button onclick="manualAddRow()" class="no-print mt-4 px-4 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition duration-200 flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                     <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
                 </svg>
-                Add Item
+                Add Item Manually
             </button>
         </section>
 
-        <!-- Notes Section -->
-        <section class="mb-8 mt-6">
-            <h3 class="text-md font-semibold text-gray-700 mb-2">Notes / Memo:</h3>
-            <textarea id="bill-notes" placeholder="e.g., Payment due in 30 days. All prices are final." class="input-item w-full h-24"></textarea>
-        </section>
-
         <!-- Totals and Summary -->
-        <section class="flex justify-end">
+        <section class="flex justify-end mt-8">
             <div class="w-full md:w-96">
                 <div class="space-y-2 text-sm text-gray-700">
                     <div class="flex justify-between p-2">
                         <span>Subtotal:</span>
-                        <span id="subtotal-output" class="font-medium">0.00</span>
+                        <span id="subtotal-output" class="font-medium">₹0.00</span>
                     </div>
                     <div class="flex justify-between p-2">
                         <span>Tax (<span id="tax-rate-display">10</span>%):</span>
-                        <span id="tax-output" class="font-medium">0.00</span>
+                        <span id="tax-output" class="font-medium">₹0.00</span>
                     </div>
                     <div class="flex justify-between p-4 bg-blue-50 rounded-lg border-t-2 border-blue-600 text-lg">
                         <span class="font-bold text-blue-800">Grand Total:</span>
-                        <span id="grand-total-output" class="font-extrabold text-blue-800">0.00</span>
+                        <span id="grand-total-output" class="font-extrabold text-blue-800">₹0.00</span>
                     </div>
                 </div>
             </div>
@@ -196,10 +191,13 @@
     </div>
 
     <script>
+        // Currency is set to Indian Rupee (INR)
         const currencyFormatter = new Intl.NumberFormat('en-IN', {
             style: 'currency',
             currency: 'INR',
         });
+        
+        // --- Core Application Logic ---
 
         // Sets the current date and a random bill ID on load
         function initialize() {
@@ -207,26 +205,30 @@
             document.getElementById('bill-date').textContent = date.toLocaleDateString();
 
             // Set a default random Bill ID
-            const defaultBillId = `TRZ-Rs{Math.floor(Math.random() * 90000) + 10000}`;
+            const defaultBillId = `TRZ-${Math.floor(Math.random() * 90000) + 10000}`;
             document.getElementById('bill-id').textContent = defaultBillId;
             document.getElementById('bill-id-input').value = defaultBillId;
 
             calculateTotals(); // Initial calculation
         }
 
-        // Creates a new item row and appends it to the table
-        function addRow() {
+        // Helper to add an item row based on data
+        function addItemRow(description = '', qty = 1, price = 0.00) {
             const itemList = document.getElementById('item-list');
+            // Ensure all values are correctly formatted and sanitized for HTML
+            const formattedPrice = parseFloat(price).toFixed(2);
+            const sanitizedDescription = description.replace(/"/g, '&quot;');
+            
             const newRowHtml = `
                 <tr class="item-row border-b border-gray-100 hover:bg-gray-50">
                     <td class="p-3">
-                        <input type="text" value="" class="input-item w-full" oninput="calculateTotals()" placeholder="Item Description">
+                        <input type="text" value="${sanitizedDescription}" class="input-item w-full" oninput="calculateTotals()" placeholder="Item Description">
                     </td>
                     <td class="p-3">
-                        <input type="number" min="0" value="1" class="input-item w-full text-right qty-input" oninput="calculateTotals()">
+                        <input type="number" min="0" value="${qty}" class="input-item w-full text-right qty-input" oninput="calculateTotals()">
                     </td>
                     <td class="p-3">
-                        <input type="number" min="0" value="0.00" step="0.01" class="input-item w-full text-right price-input" oninput="calculateTotals()">
+                        <input type="number" min="0" value="${formattedPrice}" step="0.01" class="input-item w-full text-right price-input" oninput="calculateTotals()">
                     </td>
                     <td class="p-3 text-right font-medium total-output"></td>
                     <td class="p-3 text-center no-print">
@@ -240,6 +242,11 @@
             `;
             itemList.insertAdjacentHTML('beforeend', newRowHtml);
             calculateTotals();
+        }
+
+        // Creates a blank item row (used by the manual button)
+        function manualAddRow() {
+            addItemRow('', 1, 0.00); // Default empty row
         }
 
         // Deletes an item row
@@ -268,8 +275,9 @@
                 const lineTotal = qty * price;
                 subtotal += lineTotal;
 
-                // Display line total
-                totalOutput.textContent = currencyFormatter.format(lineTotal).replace('Rs', ''); // Show without 'Rs'
+                // Remove the '₹' symbol for clean table display
+                const formattedLineTotal = currencyFormatter.format(lineTotal);
+                totalOutput.textContent = formattedLineTotal.replace('₹', '').trim();
             });
 
             const taxRateInput = document.getElementById('tax-rate');
@@ -277,7 +285,7 @@
             const tax = subtotal * (taxRate / 100);
             const grandTotal = subtotal + tax;
 
-            // Update displays
+            // Update displays (these will include the '₹' symbol)
             document.getElementById('tax-rate-display').textContent = taxRate;
             document.getElementById('subtotal-output').textContent = currencyFormatter.format(subtotal);
             document.getElementById('tax-output').textContent = currencyFormatter.format(tax);
