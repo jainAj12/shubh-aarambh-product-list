@@ -207,7 +207,7 @@
             document.getElementById('bill-date').textContent = date.toLocaleDateString();
 
             // Set a default random Bill ID
-            const defaultBillId = `TRZ-${Math.floor(Math.random() * 90000) + 10000}`;
+            const defaultBillId = `TRZ-Rs{Math.floor(Math.random() * 90000) + 10000}`;
             document.getElementById('bill-id').textContent = defaultBillId;
             document.getElementById('bill-id-input').value = defaultBillId;
 
@@ -269,7 +269,7 @@
                 subtotal += lineTotal;
 
                 // Display line total
-                totalOutput.textContent = currencyFormatter.format(lineTotal).replace('$', ''); // Show without '$'
+                totalOutput.textContent = currencyFormatter.format(lineTotal).replace('Rs', ''); // Show without 'Rs'
             });
 
             const taxRateInput = document.getElementById('tax-rate');
