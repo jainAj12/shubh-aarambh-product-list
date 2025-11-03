@@ -3,298 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shubh Aarambh Bill</title>
+    <title>Shubh Aarambh Products Cost(Local Storage)</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom styles for printing and better readability */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f7f7f7;
+            background-color: #f3f4f6;
             padding: 20px;
         }
-        .bill-container {
-            max-width: 900px;
+        .manager-container {
+            max-width: 1000px;
             margin: 0 auto;
             background: white;
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-radius: 16px;
             overflow: hidden;
             padding: 2rem;
         }
         .input-item {
             padding: 0.5rem;
-            border: 1px solid #e5e7eb;
-            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
             transition: border-color 0.2s;
         }
         .input-item:focus {
             outline: none;
-            border-color: #3b82f6; /* Blue 500 */
-        }
-
-        /* Print styles */
-        @media print {
-            /* This rule explicitly targets the print page layout. */
-            @page {
-                margin: 0;
-            }
-            body {
-                background: none;
-                padding: 0;
-                margin: 0; /* Ensures the body itself has no margin */
-            }
-            .bill-container {
-                box-shadow: none;
-                border-radius: 0;
-                width: 100%;
-                max-width: none;
-                padding: 0;
-            }
-            /* Hide controls/buttons when printing */
-            .no-print {
-                display: none !important;
-            }
-            /* Ensure text is black for printing */
-            * {
-                color: #000 !important;
-                background-color: transparent !important;
-            }
-            .table th, .table td {
-                border-color: #000 !important;
-            }
+            border-color: #10b981; /* Emerald 500 */
         }
     </style>
 </head>
 <body>
 
-    <div id="bill-container" class="bill-container">
+    <div id="manager-container" class="manager-container">
 
-        <!-- Header: Business Details -->
-        <header class="mb-8 p-4 border-b border-blue-100">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
-                <div class="mb-4 md:mb-0">
-                    <h1 class="text-3xl font-extrabold text-blue-600">SHUBH AARAMBH</h1>
-                    <p class="text-sm text-gray-500 mt-1">Specialists in Secure and Efficient Packing</p>
-                </div>
-                <div class="text-right text-sm text-gray-600">
-                    <p>Bill ID: <span id="bill-id" class="font-semibold">#</span></p>
-                    <p>Date: <span id="bill-date" class="font-semibold"></span></p>
-                    <p>Phone: 919897453335</p>
-                    <p>Email: contact@trozopack.com</p>
-                </div>
-            </div>
+        <!-- Header -->
+        <header class="mb-8 p-4 border-b-4 border-emerald-500 rounded-t-lg bg-emerald-50">
+            <h1 class="text-3xl font-extrabold text-emerald-800 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 11a1 1 0 100 2h1a1 1 0 100-2H4zm14 0a1 1 0 100 2h-1a1 1 0 100-2h1zM5.636 5.636a1 1 0 000 1.414l.707.707a1 1 0 101.414-1.414l-.707-.707a1 1 0 00-1.414 0zm12.728 12.728a1 1 0 000-1.414l-.707-.707a1 1 0 00-1.414 1.414l.707.707a1 1 0 001.414 0zM12 10a2 2 0 11-4 0 2 2 0 014 0z" clip-rule="evenodd" />
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-7-8a1 1 0 001-1v-2a1 1 0 10-2 0v2a1 1 0 001 1zM16 9a1 1 0 100 2h2a1 1 0 100-2h-2zm-5 7a1 1 0 100-2h2a1 1 0 100 2h-2z" clip-rule="evenodd" />
+                </svg>
+                Shubh Aarambh Products List
+            </h1>
+            <p class="text-sm text-emerald-600 mt-2 font-medium">All data is saved securely in your browser's local storage.</p>
         </header>
 
-        <!-- Customer and Bill Info -->
-        <section class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div>
-                <h2 class="text-lg font-bold text-gray-700 mb-2">Billed To:</h2>
-                <!-- Customer Inputs with Values REMOVED -->
-                <input type="text" id="customer-name" placeholder="Customer Name" class="input-item w-full mb-2" value="" required>
-                <input type="text" id="customer-address" placeholder="Address" class="input-item w-full mb-2" value="" required>
-                <input type="tel" id="customer-phone" placeholder="Phone Number" class="input-item w-full mb-2" value="" required>
-                <input type="email" id="customer-email" placeholder="Email Address" class="input-item w-full" value="" required>
-                <!-- END Customer Inputs -->
-            </div>
-            <div class="md:text-right">
-                <div class="p-3 bg-blue-50 rounded-lg">
-                    <label for="tax-rate" class="block text-sm font-medium text-gray-700">Tax Rate (%)</label>
-                    <input type="number" id="tax-rate" value="10" min="0" max="100" class="input-item w-20 text-center mt-1" oninput="calculateTotals()">
-                </div>
-                <div class="mt-4 p-3 bg-gray-50 rounded-lg">
-                    <label for="bill-id-input" class="block text-sm font-medium text-gray-700">Set Bill ID</label>
-                    <input type="text" id="bill-id-input" class="input-item w-40 mt-1" oninput="document.getElementById('bill-id').textContent = this.value || '#'">
-                </div>
-            </div>
-        </section>
-        
         <!-- Item Table -->
-        <section class="mb-4">
-            <h2 class="text-lg font-bold text-gray-700 mb-2">Item Details</h2>
+        <section class="mb-6">
+            <h2 class="text-xl font-bold text-gray-700 mb-4">Product List</h2>
             <div class="overflow-x-auto">
-                <table class="min-w-full bg-white rounded-lg table">
-                    <thead class="bg-gray-100 border-b border-gray-200">
+                <table class="min-w-full bg-white rounded-lg border border-gray-200">
+                    <thead class="bg-gray-100 border-b border-gray-300">
                         <tr class="text-sm font-semibold text-gray-600 uppercase tracking-wider">
-                            <th class="p-3 text-left">Description</th>
-                            <th class="p-3 text-right w-24">Qty</th>
-                            <th class="p-3 text-right w-28">Unit Price</th>
-                            <th class="p-3 text-right w-28">Total</th>
-                            <th class="p-3 text-center no-print w-16"></th>
+                            <th class="p-3 text-left w-5/12">Description</th>
+                            <th class="p-3 text-right w-1/12">Qty</th>
+                            <th class="p-3 text-right w-2/12">Unit Price (₹)</th>
+                            <th class="p-3 text-right w-2/12">Total Cost (₹)</th>
+                            <th class="p-3 text-center w-1/12"></th>
                         </tr>
                     </thead>
                     <tbody id="item-list">
-                        <!-- Default Row - Values cleared except for Qty/Price defaults -->
-                        <tr class="item-row border-b border-gray-100 hover:bg-gray-50">
-                            <td class="p-3">
-                                <input type="text" value="" class="input-item w-full" oninput="calculateTotals()" placeholder="Item Description">
-                            </td>
-                            <td class="p-3">
-                                <input type="number" min="0" value="1" class="input-item w-full text-right qty-input" oninput="calculateTotals()">
-                            </td>
-                            <td class="p-3">
-                                <input type="number" min="0" value="0.00" step="0.01" class="input-item w-full text-right price-input" oninput="calculateTotals()">
-                            </td>
-                            <td class="p-3 text-right font-medium total-output"></td>
-                            <td class="p-3 text-center no-print">
-                                <button onclick="deleteRow(this)" class="text-red-500 hover:text-red-700 transition duration-150">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3"></path>
-                                    </svg>
-                                </button>
-                            </td>
-                        </tr>
+                        <!-- Data rows will be inserted here by JavaScript -->
                     </tbody>
                 </table>
             </div>
 
-            <!-- MANUAL Add Item button now calls manualAddRow -->
-            <button onclick="manualAddRow()" class="no-print mt-4 px-4 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition duration-200 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                </svg>
-                Add Item Manually
-            </button>
-        </section>
+            <!-- Buttons Section -->
+            <div class="flex items-center space-x-4">
+                <!-- Add Item Button -->
+                <button onclick="addNewProduct()" class="mt-6 px-6 py-3 bg-emerald-600 text-white font-bold rounded-full shadow-lg hover:bg-emerald-700 transition duration-300 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                    </svg>
+                    Add New Product
+                </button>
 
-        <!-- Totals and Summary -->
-        <section class="flex justify-end mt-8">
-            <div class="w-full md:w-96">
-                <div class="space-y-2 text-sm text-gray-700">
-                    <div class="flex justify-between p-2">
-                        <span>Subtotal:</span>
-                        <span id="subtotal-output" class="font-medium">₹0.00</span>
-                    </div>
-                    <div class="flex justify-between p-2">
-                        <span>Tax (<span id="tax-rate-display">10</span>%):</span>
-                        <span id="tax-output" class="font-medium">₹0.00</span>
-                    </div>
-                    <div class="flex justify-between p-4 bg-blue-50 rounded-lg border-t-2 border-blue-600 text-lg">
-                        <span class="font-bold text-blue-800">Grand Total:</span>
-                        <span id="grand-total-output" class="font-extrabold text-blue-800">₹0.00</span>
-                    </div>
-                </div>
+                <!-- NEW Save Button -->
+                <button id="save-button" onclick="saveProductsWithFeedback()" class="mt-6 px-6 py-3 bg-blue-600 text-white font-bold rounded-full shadow-lg hover:bg-blue-700 transition duration-300 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-4 3v4m-2 0h4m-7-3h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v1"></path>
+                    </svg>
+                    Save Changes
+                </button>
+
+                <!-- Feedback Span -->
+                <span id="save-feedback" class="mt-6 text-base text-blue-600 font-semibold opacity-0 transition duration-500"></span>
             </div>
         </section>
-
-        <!-- Action Button -->
-        <div class="no-print mt-8 pt-4 border-t border-gray-200 flex justify-center">
-            <button onclick="window.print()" class="px-6 py-3 bg-blue-600 text-white font-bold rounded-lg shadow-lg hover:bg-blue-700 transition duration-300 transform hover:scale-[1.02] flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m4 0v3m0 0h-3m3 0h3m-2-12h.01M17 16l-4 4-4-4" />
-                </svg>
-                Generate & Print Bill
-            </button>
-        </div>
 
     </div>
 
     <script>
-        // Currency is set to Indian Rupee (INR)
+        // Global array to store product data
+        let products = [];
+        const STORAGE_KEY = 'productCostManagerData';
+
+        // Currency formatter for Indian Rupee (INR)
         const currencyFormatter = new Intl.NumberFormat('en-IN', {
             style: 'currency',
             currency: 'INR',
         });
-        
-        // --- Core Application Logic ---
 
-        // Sets the current date and a random bill ID on load
-        function initialize() {
-            const date = new Date();
-            document.getElementById('bill-date').textContent = date.toLocaleDateString();
+        // --- LOCAL STORAGE HANDLING ---
 
-            // Set a default random Bill ID
-            const defaultBillId = `TRZ-${Math.floor(Math.random() * 90000) + 10000}`;
-            document.getElementById('bill-id').textContent = defaultBillId;
-            document.getElementById('bill-id-input').value = defaultBillId;
-
-            calculateTotals(); // Initial calculation
-        }
-
-        // Helper to add an item row based on data
-        function addItemRow(description = '', qty = 1, price = 0.00) {
-            const itemList = document.getElementById('item-list');
-            // Ensure all values are correctly formatted and sanitized for HTML
-            const formattedPrice = parseFloat(price).toFixed(2);
-            const sanitizedDescription = description.replace(/"/g, '&quot;');
-            
-            const newRowHtml = `
-                <tr class="item-row border-b border-gray-100 hover:bg-gray-50">
-                    <td class="p-3">
-                        <input type="text" value="${sanitizedDescription}" class="input-item w-full" oninput="calculateTotals()" placeholder="Item Description">
-                    </td>
-                    <td class="p-3">
-                        <input type="number" min="0" value="${qty}" class="input-item w-full text-right qty-input" oninput="calculateTotals()">
-                    </td>
-                    <td class="p-3">
-                        <input type="number" min="0" value="${formattedPrice}" step="0.01" class="input-item w-full text-right price-input" oninput="calculateTotals()">
-                    </td>
-                    <td class="p-3 text-right font-medium total-output"></td>
-                    <td class="p-3 text-center no-print">
-                        <button onclick="deleteRow(this)" class="text-red-500 hover:text-red-700 transition duration-150">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3"></path>
-                            </svg>
-                        </button>
-                    </td>
-                </tr>
-            `;
-            itemList.insertAdjacentHTML('beforeend', newRowHtml);
-            calculateTotals();
-        }
-
-        // Creates a blank item row (used by the manual button)
-        function manualAddRow() {
-            addItemRow('', 1, 0.00); // Default empty row
-        }
-
-        // Deletes an item row
-        function deleteRow(button) {
-            const row = button.closest('.item-row');
-            if (row) {
-                row.remove();
-                calculateTotals();
+        // Function to save the products array to local storage
+        function saveProducts() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
+            } catch (e) {
+                console.error("Error saving to local storage:", e);
+                // Note: Per instructions, custom modal needed instead of alert
+                console.error("Warning: Could not save data to local storage. Your data may be lost if you refresh.");
             }
         }
 
-        // Calculates all totals (subtotal, tax, grand total)
-        function calculateTotals() {
-            const itemRows = document.querySelectorAll('.item-row');
-            let subtotal = 0;
-
-            itemRows.forEach(row => {
-                const qtyInput = row.querySelector('.qty-input');
-                const priceInput = row.querySelector('.price-input');
-                const totalOutput = row.querySelector('.total-output');
-
-                // Sanitize inputs
-                const qty = parseFloat(qtyInput.value) || 0;
-                const price = parseFloat(priceInput.value) || 0;
-
-                const lineTotal = qty * price;
-                subtotal += lineTotal;
-
-                // Remove the '₹' symbol for clean table display
-                const formattedLineTotal = currencyFormatter.format(lineTotal);
-                totalOutput.textContent = formattedLineTotal.replace('₹', '').trim();
-            });
-
-            const taxRateInput = document.getElementById('tax-rate');
-            const taxRate = parseFloat(taxRateInput.value) || 0;
-            const tax = subtotal * (taxRate / 100);
-            const grandTotal = subtotal + tax;
-
-            // Update displays (these will include the '₹' symbol)
-            document.getElementById('tax-rate-display').textContent = taxRate;
-            document.getElementById('subtotal-output').textContent = currencyFormatter.format(subtotal);
-            document.getElementById('tax-output').textContent = currencyFormatter.format(tax);
-            document.getElementById('grand-total-output').textContent = currencyFormatter.format(grandTotal);
+        // Function to load data from local storage on startup
+        function loadProducts() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                products = JSON.parse(savedData);
+            } else {
+                // Default initial data if nothing is saved yet
+                products = [
+                    { id: 1, description: 'Default Packing Material', quantity: 1, unitPrice: 500.00 },
+                    { id: 2, description: 'Labour Charges (Hours)', quantity: 4, unitPrice: 250.00 }
+                ];
+            }
         }
 
-        // Initialize the app on load
-        window.onload = initialize;
+        // --- UI Feedback Function ---
+        window.saveProductsWithFeedback = function() {
+            saveProducts(); // Explicitly call the save function
+            
+            const feedbackSpan = document.getElementById('save-feedback');
+            feedbackSpan.textContent = 'Saved!';
+            feedbackSpan.classList.remove('opacity-0', 'text-gray-500');
+            feedbackSpan.classList.add('opacity-100', 'text-blue-600', 'font-semibold');
+            
+            // Clear the feedback after 2 seconds
+            setTimeout(() => {
+                feedbackSpan.classList.remove('opacity-100', 'text-blue-600', 'font-semibold');
+                feedbackSpan.classList.add('opacity-0', 'text-gray-500');
+            }, 2000);
+        }
 
+        // --- IN-MEMORY CRUD OPERATIONS ---
+
+        // Adds a new product to the local array
+        window.addNewProduct = function() {
+            // Use a highly unique ID based on time
+            const newId = Date.now() + Math.floor(Math.random() * 1000); 
+            products.push({
+                id: newId,
+                description: 'New Product/Service',
+                quantity: 1,
+                unitPrice: 0.00,
+            });
+            saveProducts(); // Save data after adding
+            renderProductList();
+        }
+        
+        // Updates an existing product in the local array
+        window.updateProduct = function(docId, field, value) {
+            const product = products.find(p => p.id === docId);
+            if (product) {
+                if (field === 'description') {
+                    product.description = value.trim();
+                } else {
+                    product[field] = parseFloat(value) || 0;
+                }
+                saveProducts(); // Save data after updating
+                renderProductList(); // Re-render line totals (Total Cost)
+            }
+        }
+
+        // Deletes a product from the local array
+        window.deleteProduct = function(docId) {
+            products = products.filter(p => p.id !== docId);
+            saveProducts(); // Save data after deleting
+            renderProductList();
+        }
+
+        // --- UI RENDERING AND CALCULATION ---
+
+        function renderProductList() {
+            const itemList = document.getElementById('item-list');
+            let subtotal = 0; 
+            itemList.innerHTML = ''; // Clear existing rows
+
+            if (products.length === 0) {
+                itemList.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500 italic">No products added yet. Click 'Add New Product' to begin.</td></tr>`;
+            } else {
+                products.forEach(product => {
+                    const qty = product.quantity || 0;
+                    const price = product.unitPrice || 0;
+                    const lineTotal = qty * price;
+                    subtotal += lineTotal;
+
+                    const formattedLineTotal = currencyFormatter.format(lineTotal);
+                    const formattedPrice = parseFloat(price).toFixed(2);
+                    
+                    const newRow = document.createElement('tr');
+                    newRow.className = 'item-row border-b border-gray-100 hover:bg-emerald-50';
+                    
+                    // Use a string representation of the ID for onblur events
+                    newRow.innerHTML = `
+                        <td class="p-3">
+                            <input type="text" value="${product.description}" 
+                                class="input-item w-full" 
+                                onblur="updateProduct(${product.id}, 'description', this.value)" 
+                                placeholder="Product Description">
+                        </td>
+                        <td class="p-3">
+                            <input type="number" min="0" value="${qty}" 
+                                class="input-item w-full text-right" 
+                                onblur="updateProduct(${product.id}, 'quantity', this.value)">
+                        </td>
+                        <td class="p-3">
+                            <input type="number" min="0" value="${formattedPrice}" step="0.01" 
+                                class="input-item w-full text-right" 
+                                onblur="updateProduct(${product.id}, 'unitPrice', this.value)">
+                        </td>
+                        <td class="p-3 text-right font-semibold text-gray-800">${formattedLineTotal}</td>
+                        <td class="p-3 text-center">
+                            <button onclick="deleteProduct(${product.id})" 
+                                class="text-red-500 hover:text-red-700 transition duration-150 p-2 rounded-full hover:bg-red-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3"></path>
+                                </svg>
+                            </button>
+                        </td>
+                    `;
+                    itemList.appendChild(newRow);
+                });
+            }
+        }
+
+        // Initialize the app on load: Load data then render
+        window.onload = function() {
+            loadProducts();
+            renderProductList();
+        };
     </script>
 </body>
 </html>
