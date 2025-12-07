@@ -3,249 +3,563 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shubh Aarambh Products Cost(Local Storage)</title>
+    <title>Finance Flow Tracker</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        /* Custom styles for appearance */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-            padding: 20px;
+            background-color: #f3f4f6; /* Light gray background */
         }
-        .manager-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            border-radius: 16px;
-            overflow: hidden;
-            padding: 2rem;
+        .balance-card {
+            transition: all 0.3s ease-in-out;
+            cursor: default;
         }
-        .input-item {
-            padding: 0.5rem;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            transition: border-color 0.2s;
+        .balance-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
-        .input-item:focus {
-            outline: none;
-            border-color: #10b981; /* Emerald 500 */
+        /* Ensures the history section scrolls smoothly on touch devices */
+        .scroll-history {
+            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
 <body>
 
-    <div id="manager-container" class="manager-container">
-
-        <!-- Header -->
-        <header class="mb-8 p-4 border-b-4 border-emerald-500 rounded-t-lg bg-emerald-50">
-            <h1 class="text-3xl font-extrabold text-emerald-800 flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-3" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 11a1 1 0 100 2h1a1 1 0 100-2H4zm14 0a1 1 0 100 2h-1a1 1 0 100-2h1zM5.636 5.636a1 1 0 000 1.414l.707.707a1 1 0 101.414-1.414l-.707-.707a1 1 0 00-1.414 0zm12.728 12.728a1 1 0 000-1.414l-.707-.707a1 1 0 00-1.414 1.414l.707.707a1 1 0 001.414 0zM12 10a2 2 0 11-4 0 2 2 0 014 0z" clip-rule="evenodd" />
-                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-7-8a1 1 0 001-1v-2a1 1 0 10-2 0v2a1 1 0 001 1zM16 9a1 1 0 100 2h2a1 1 0 100-2h-2zm-5 7a1 1 0 100-2h2a1 1 0 100 2h-2z" clip-rule="evenodd" />
-                </svg>
-                Shubh Aarambh Products List
-            </h1>
-            <p class="text-sm text-emerald-600 mt-2 font-medium">All data is saved securely in your browser's local storage.</p>
-        </header>
-
-        <!-- Item Table -->
-        <section class="mb-6">
-            <h2 class="text-xl font-bold text-gray-700 mb-4">Product List</h2>
-            <div class="overflow-x-auto">
-                <table class="min-w-full bg-white rounded-lg border border-gray-200">
-                    <thead class="bg-gray-100 border-b border-gray-300">
-                        <tr class="text-sm font-semibold text-gray-600 uppercase tracking-wider">
-                            <th class="p-3 text-left w-5/12">Description</th>
-                            <th class="p-3 text-right w-1/12">Qty</th>
-                            <th class="p-3 text-right w-2/12">Unit Price (₹)</th>
-                            <th class="p-3 text-right w-2/12">Total Cost (₹)</th>
-                            <th class="p-3 text-center w-1/12"></th>
-                        </tr>
-                    </thead>
-                    <tbody id="item-list">
-                        <!-- Data rows will be inserted here by JavaScript -->
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Buttons Section -->
-            <div class="flex items-center space-x-4">
-                <!-- Add Item Button -->
-                <button onclick="addNewProduct()" class="mt-6 px-6 py-3 bg-emerald-600 text-white font-bold rounded-full shadow-lg hover:bg-emerald-700 transition duration-300 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                    </svg>
-                    Add New Product
-                </button>
-
-                <!-- NEW Save Button -->
-                <button id="save-button" onclick="saveProductsWithFeedback()" class="mt-6 px-6 py-3 bg-blue-600 text-white font-bold rounded-full shadow-lg hover:bg-blue-700 transition duration-300 flex items-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7H5a2 2 0 00-2 2v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-4 3v4m-2 0h4m-7-3h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v1"></path>
-                    </svg>
-                    Save Changes
-                </button>
-
-                <!-- Feedback Span -->
-                <span id="save-feedback" class="mt-6 text-base text-blue-600 font-semibold opacity-0 transition duration-500"></span>
-            </div>
-        </section>
-
+    <div id="app" class="min-h-screen p-4 sm:p-8 flex justify-center">
+        <!-- Content will be rendered here by JavaScript -->
+        <div id="loading-indicator" class="w-full max-w-4xl flex flex-col justify-center items-center h-96">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-indigo-500"></div>
+            <p class="ml-3 mt-3 text-indigo-600 font-medium">Connecting to secure ledger...</p>
+        </div>
     </div>
 
-    <script>
-        // Global array to store product data
-        let products = [];
-        const STORAGE_KEY = 'productCostManagerData';
+    <!-- Firebase SDK Imports -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInAnonymously, 
+            signInWithCustomToken, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            query, 
+            onSnapshot, 
+            serverTimestamp,
+            // setLogLevel // For debugging
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Currency formatter for Indian Rupee (INR)
-        const currencyFormatter = new Intl.NumberFormat('en-IN', {
-            style: 'currency',
-            currency: 'INR',
-        });
+        // --- Global Configuration Variables (MUST BE USED) ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-        // --- LOCAL STORAGE HANDLING ---
+        // --- Application State and Firebase Instances ---
+        let db;
+        let auth;
+        let userId = null;
+        let transactions = [];
+        let isAuthReady = false;
+        let currentError = null;
+        let transactionType = 'expense'; // default
+        let tempAmount = ''; // For pre-filling initial balance
+        let tempDescription = ''; // For pre-filling initial balance
 
-        // Function to save the products array to local storage
-        function saveProducts() {
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
-            } catch (e) {
-                console.error("Error saving to local storage:", e);
-                // Note: Per instructions, custom modal needed instead of alert
-                console.error("Warning: Could not save data to local storage. Your data may be lost if you refresh.");
-            }
-        }
+        // --- Configuration Constants ---
+        const EXPENSE_CATEGORIES = [
+            "Grocery",
+            "Salon",
+            "Rent",
+            "Travel (Office)",
+            "Travel (Elsewhere)",
+            "Movie",
+            "Other Expense"
+        ];
 
-        // Function to load data from local storage on startup
-        function loadProducts() {
-            const savedData = localStorage.getItem(STORAGE_KEY);
-            if (savedData) {
-                products = JSON.parse(savedData);
-            } else {
-                // Default initial data if nothing is saved yet
-                products = [
-                    { id: 1, description: 'Default Packing Material', quantity: 1, unitPrice: 500.00 },
-                    { id: 2, description: 'Labour Charges (Hours)', quantity: 4, unitPrice: 250.00 }
-                ];
-            }
-        }
 
-        // --- UI Feedback Function ---
-        window.saveProductsWithFeedback = function() {
-            saveProducts(); // Explicitly call the save function
-            
-            const feedbackSpan = document.getElementById('save-feedback');
-            feedbackSpan.textContent = 'Saved!';
-            feedbackSpan.classList.remove('opacity-0', 'text-gray-500');
-            feedbackSpan.classList.add('opacity-100', 'text-blue-600', 'font-semibold');
-            
-            // Clear the feedback after 2 seconds
-            setTimeout(() => {
-                feedbackSpan.classList.remove('opacity-100', 'text-blue-600', 'font-semibold');
-                feedbackSpan.classList.add('opacity-0', 'text-gray-500');
-            }, 2000);
-        }
+        // --- Utility Functions ---
 
-        // --- IN-MEMORY CRUD OPERATIONS ---
+        /** Formats a number as INR currency (Rupees) without decimals. */
+        const formatCurrency = (value) => {
+            // Using Intl.NumberFormat for INR with minimumFractionDigits set to 0
+            return new Intl.NumberFormat('en-IN', {
+                style: 'currency',
+                currency: 'INR',
+                minimumFractionDigits: 0, 
+                maximumFractionDigits: 0,
+            }).format(value).replace('₹', 'Rs '); // Replace the Unicode Rupee symbol with 'Rs '
+        };
 
-        // Adds a new product to the local array
-        window.addNewProduct = function() {
-            // Use a highly unique ID based on time
-            const newId = Date.now() + Math.floor(Math.random() * 1000); 
-            products.push({
-                id: newId,
-                description: 'New Product/Service',
-                quantity: 1,
-                unitPrice: 0.00,
-            });
-            saveProducts(); // Save data after adding
-            renderProductList();
-        }
-        
-        // Updates an existing product in the local array
-        window.updateProduct = function(docId, field, value) {
-            const product = products.find(p => p.id === docId);
-            if (product) {
-                if (field === 'description') {
-                    product.description = value.trim();
-                } else {
-                    product[field] = parseFloat(value) || 0;
+        /** Updates the error message display in the UI. */
+        const setError = (message) => {
+            currentError = message;
+            renderApp();
+        };
+
+        // --- Core Logic ---
+
+        /** Calculates the total income, total expense, and the resulting net balance. */
+        const calculateBreakdown = () => {
+            return transactions.reduce((acc, tx) => {
+                const amountVal = parseFloat(tx.amount) || 0;
+                if (tx.type === 'income') {
+                    acc.totalIncome += amountVal;
+                } else { // 'expense'
+                    acc.totalExpense += amountVal;
                 }
-                saveProducts(); // Save data after updating
-                renderProductList(); // Re-render line totals (Total Cost)
+                acc.netBalance = acc.totalIncome - acc.totalExpense;
+                return acc;
+            }, { netBalance: 0, totalIncome: 0, totalExpense: 0 });
+        };
+
+        const getCollectionPath = () => {
+            if (!userId) return null;
+            // Private user data path: /artifacts/{appId}/users/{userId}/{your_collection_name}
+            return `artifacts/${appId}/users/${userId}/transactions`;
+        };
+
+        // --- Firebase Setup and Listeners ---
+
+        const setupTransactionListener = () => {
+            if (!db || !isAuthReady || !userId) return;
+
+            const path = getCollectionPath();
+            if (!path) return;
+
+            const transactionsColRef = collection(db, path);
+            const q = query(transactionsColRef);
+
+            // Real-time listener using onSnapshot()
+            onSnapshot(q, (snapshot) => {
+                const fetchedTransactions = snapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        ...data,
+                        amount: Number(data.amount),
+                        // Convert Firestore Timestamp to Date object for display
+                        createdAt: data.createdAt ? data.createdAt.toDate() : new Date(),
+                    };
+                }).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime()); // Sort locally by newest first
+
+                transactions = fetchedTransactions;
+                setError(null); // Clear any connection errors if successful
+                renderApp();
+            }, (err) => {
+                console.error("Firestore onSnapshot error:", err);
+                setError(`Error fetching data: ${err.message}. Check console for details.`);
+            });
+        };
+
+        const initializeFirebase = async () => {
+            if (Object.keys(firebaseConfig).length === 0) {
+                return setError("Firebase configuration is missing. Cannot persist data.");
             }
-        }
 
-        // Deletes a product from the local array
-        window.deleteProduct = function(docId) {
-            products = products.filter(p => p.id !== docId);
-            saveProducts(); // Save data after deleting
-            renderProductList();
-        }
+            // setLogLevel('debug'); // Uncomment for verbose logging
+            
+            try {
+                const appInstance = initializeApp(firebaseConfig);
+                db = getFirestore(appInstance);
+                auth = getAuth(appInstance);
 
-        // --- UI RENDERING AND CALCULATION ---
+                // 1. Set up authentication listener
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                    } else {
+                        // If no user, userId will be null until signInAnonymously succeeds
+                        userId = null; 
+                    }
+                    isAuthReady = true;
+                    // Start listening for data once auth is confirmed
+                    setupTransactionListener();
+                    renderApp(); 
+                });
 
-        function renderProductList() {
-            const itemList = document.getElementById('item-list');
-            let subtotal = 0; 
-            itemList.innerHTML = ''; // Clear existing rows
+                // 2. Initial sign-in attempt
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    // Fallback to anonymous sign-in if token is undefined or missing
+                    await signInAnonymously(auth);
+                }
+                
+            } catch (e) {
+                console.error("Firebase Initialization Error:", e);
+                setError(`Initialization failed: ${e.message}. Attempting anonymous sign-in...`);
+                // Attempt anonymous sign-in as a final fallback if custom token fails
+                try {
+                    await signInAnonymously(auth);
+                } catch (anonError) {
+                    setError(`Initialization failed: ${e.message}. Anonymous sign-in also failed.`);
+                }
+            }
+        };
 
-            if (products.length === 0) {
-                itemList.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-gray-500 italic">No products added yet. Click 'Add New Product' to begin.</td></tr>`;
+        // --- UI Rendering Functions ---
+
+        /** Renders the summary cards (Income, Expense, Net Balance). */
+        const renderSummaryCards = (breakdown) => {
+            const { netBalance, totalIncome, totalExpense } = breakdown;
+            
+            // Card 1: Total Income (The original/starting balance component)
+            const incomeCard = `
+                <div class="balance-card p-4 sm:p-6 rounded-xl shadow-lg bg-green-500 text-white w-full">
+                    <h2 class="text-sm font-light uppercase tracking-wider opacity-90">Total Income (Original/Deposits)</h2>
+                    <p class="text-3xl sm:text-4xl font-extrabold mt-1 tracking-tight">
+                        ${formatCurrency(totalIncome)}
+                    </p>
+                </div>
+            `;
+
+            // Card 2: Total Expense
+            const expenseCard = `
+                <div class="balance-card p-4 sm:p-6 rounded-xl shadow-lg bg-red-500 text-white w-full">
+                    <h2 class="text-sm font-light uppercase tracking-wider opacity-90">Total Expense</h2>
+                    <p class="text-3xl sm:text-4xl font-extrabold mt-1 tracking-tight">
+                        ${formatCurrency(totalExpense)}
+                    </p>
+                </div>
+            `;
+
+            // Card 3: Net Balance (Current Balance) - Made larger and more prominent
+            const isPositive = netBalance >= 0;
+            const netColorClass = isPositive ? 'bg-indigo-600' : 'bg-red-700';
+            const netIcon = isPositive ? '💰' : '📉';
+
+            const netCard = `
+                <div class="balance-card p-4 sm:p-6 rounded-xl shadow-lg ${netColorClass} text-white w-full md:col-span-3">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-sm font-light uppercase tracking-wider opacity-90">Net Balance (Current)</h2>
+                        <span class="text-2xl font-bold">${netIcon}</span>
+                    </div>
+                    <p class="text-4xl sm:text-5xl font-extrabold mt-1 tracking-tight">
+                        ${formatCurrency(netBalance)}
+                    </p>
+                </div>
+            `;
+            
+            // Layout is adjusted for mobile: Income/Expense on small screens, Net Balance prominently below.
+            // On MD screens and up, Net Balance takes up the third column.
+            return `
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    ${incomeCard}
+                    ${expenseCard}
+                    <div class="col-span-2 md:col-span-1">
+                        ${netCard}
+                    </div>
+                </div>
+            `;
+        };
+
+        /** Renders the list of past transactions. */
+        const renderHistory = () => {
+            if (transactions.length === 0) {
+                return `
+                    <p class="text-gray-500 italic p-4 text-center">
+                        No transactions recorded yet. Add your first income or expense!
+                    </p>
+                `;
+            }
+
+            return transactions.map(tx => {
+                const isExpense = tx.type === 'expense';
+                const amountColor = isExpense ? 'text-red-600' : 'text-green-600';
+                const sign = isExpense ? '-' : '+';
+                
+                // Updated dateOptions to explicitly include month, day, year, hour, and minute
+                const dateOptions = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+                const dateStr = tx.createdAt instanceof Date 
+                    // Use toLocaleString to get both date and time (including month)
+                    ? tx.createdAt.toLocaleString('en-US', dateOptions)
+                    : 'Date missing';
+
+                return `
+                    <div class="flex justify-between items-center p-3 border-l-4 ${isExpense ? 'border-red-100' : 'border-green-100'} hover:bg-gray-50 rounded-lg">
+                        <div class="flex flex-col min-w-0 pr-4">
+                            <span class="font-medium text-gray-800 truncate">${tx.description}</span>
+                            <span class="text-xs text-gray-400 mt-0.5">${dateStr}</span>
+                        </div>
+                        <span class="font-semibold ${amountColor} flex-shrink-0">
+                            ${sign} ${formatCurrency(tx.amount)}
+                        </span>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        /** Renders the entire application container. */
+        const renderApp = () => {
+            const appContainer = document.getElementById('app');
+            const breakdown = calculateBreakdown();
+            
+            if (!isAuthReady) {
+                 // Keep the loading spinner if not ready
+                 appContainer.innerHTML = document.getElementById('loading-indicator').outerHTML;
+                 return;
+            }
+
+            // --- Logic to pre-fill initial income on empty ledger ---
+            let initialBalanceMessage = '';
+            let currentTempDescription = '';
+            let currentTempAmount = '';
+            
+            if (transactions.length === 0) {
+                // If ledger is empty, guide the user to set their initial balance
+                transactionType = 'income'; // Force income selection
+                currentTempAmount = '29385'; 
+                currentTempDescription = 'Initial Deposit';
+                initialBalanceMessage = `
+                    <div class="p-3 mb-4 text-sm text-green-700 bg-green-100 rounded-lg" role="alert">
+                        <span class="font-medium">Welcome!</span> To set your starting balance of Rs 29,385, the form below is pre-filled. Just click 
+                        <span class="font-semibold">"Record Income"</span>.
+                    </div>
+                `;
             } else {
-                products.forEach(product => {
-                    const qty = product.quantity || 0;
-                    const price = product.unitPrice || 0;
-                    const lineTotal = qty * price;
-                    subtotal += lineTotal;
+                // Clear temporary defaults once transactions exist, and reset type to expense for next entry
+                currentTempAmount = '';
+                currentTempDescription = '';
+            }
+            // --- End pre-fill logic ---
 
-                    const formattedLineTotal = currencyFormatter.format(lineTotal);
-                    const formattedPrice = parseFloat(price).toFixed(2);
-                    
-                    const newRow = document.createElement('tr');
-                    newRow.className = 'item-row border-b border-gray-100 hover:bg-emerald-50';
-                    
-                    // Use a string representation of the ID for onblur events
-                    newRow.innerHTML = `
-                        <td class="p-3">
-                            <input type="text" value="${product.description}" 
-                                class="input-item w-full" 
-                                onblur="updateProduct(${product.id}, 'description', this.value)" 
-                                placeholder="Product Description">
-                        </td>
-                        <td class="p-3">
-                            <input type="number" min="0" value="${qty}" 
-                                class="input-item w-full text-right" 
-                                onblur="updateProduct(${product.id}, 'quantity', this.value)">
-                        </td>
-                        <td class="p-3">
-                            <input type="number" min="0" value="${formattedPrice}" step="0.01" 
-                                class="input-item w-full text-right" 
-                                onblur="updateProduct(${product.id}, 'unitPrice', this.value)">
-                        </td>
-                        <td class="p-3 text-right font-semibold text-gray-800">${formattedLineTotal}</td>
-                        <td class="p-3 text-center">
-                            <button onclick="deleteProduct(${product.id})" 
-                                class="text-red-500 hover:text-red-700 transition duration-150 p-2 rounded-full hover:bg-red-100">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3"></path>
-                                </svg>
+            // --- Dropdown generation ---
+            let categories = [...EXPENSE_CATEGORIES];
+            let selectPlaceholder = 'Select a category...';
+            
+            if (transactions.length === 0) {
+                // For initial deposit, temporarily add the initial deposit description
+                categories.unshift(currentTempDescription);
+                selectPlaceholder = 'Transaction description...';
+            }
+
+            const categoriesHtml = categories.map(cat => `
+                <option value="${cat}" ${cat === currentTempDescription ? 'selected' : ''}>${cat}</option>
+            `).join('');
+
+            const descriptionInputHtml = `
+                <select
+                    id="description"
+                    required
+                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm appearance-none bg-white"
+                >
+                    <option value="" disabled selected>${selectPlaceholder}</option>
+                    ${categoriesHtml}
+                </select>
+            `;
+            // --- End Dropdown generation ---
+
+
+            const errorHtml = currentError ? `
+                <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg shadow-sm" role="alert">
+                    <p class="font-bold">Error</p>
+                    <p>${currentError}</p>
+                </div>
+            ` : '';
+
+            // MUST display the full userId for debugging multi-user issues
+            const userIdHtml = userId ? `
+                <p class="text-xs text-gray-500 mt-2 p-2 bg-gray-100 rounded-lg break-all">
+                    User ID: <span class="font-mono text-gray-700 font-semibold">${userId}</span>
+                </p>
+            ` : '';
+            
+            // Determine button styling based on current transactionType
+            const expenseButtonClass = transactionType === 'expense' 
+                ? 'bg-red-500 text-white shadow-md' 
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200';
+            
+            const incomeButtonClass = transactionType === 'income' 
+                ? 'bg-green-500 text-white shadow-md' 
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200';
+
+            const submitButtonText = `Record ${transactionType === 'expense' ? 'Expense' : 'Income'}`;
+
+
+            appContainer.innerHTML = `
+                <div class="w-full max-w-4xl space-y-6 sm:space-y-8">
+                    <header class="text-center pt-4 pb-2">
+                        <h1 class="text-3xl sm:text-4xl font-extrabold text-indigo-700">
+                            Financial Flow Tracker
+                        </h1>
+                        <p class="text-lg text-gray-500 mt-1">Manage your income and expenses effortlessly.</p>
+                    </header>
+
+                    ${renderSummaryCards(breakdown)}
+
+                    ${userIdHtml}
+
+                    ${errorHtml}
+
+                    <!-- Add Transaction Form -->
+                    <div class="bg-white p-6 rounded-xl shadow-xl">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4">Record New Transaction</h3>
+                        ${initialBalanceMessage}
+                        <form id="transactionForm" class="space-y-4">
+                            
+                            <!-- Transaction Type Selector -->
+                            <div class="flex space-x-2 sm:space-x-4">
+                                <button
+                                    type="button"
+                                    data-type="expense"
+                                    class="type-selector flex-1 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors ${expenseButtonClass}"
+                                >
+                                    Expense
+                                </button>
+                                <button
+                                    type="button"
+                                    data-type="income"
+                                    class="type-selector flex-1 py-2 rounded-lg text-sm sm:text-base font-medium transition-colors ${incomeButtonClass}"
+                                >
+                                    Income
+                                </button>
+                            </div>
+
+                            <!-- Description Dropdown -->
+                            <div>
+                                <label for="description" class="block text-sm font-medium text-gray-700">
+                                    Description / Category
+                                </label>
+                                ${descriptionInputHtml}
+                            </div>
+
+                            <!-- Amount Input -->
+                            <div>
+                                <label for="amount" class="block text-sm font-medium text-gray-700">
+                                    Amount
+                                </label>
+                                <div class="relative mt-1">
+                                    <input
+                                        id="amount"
+                                        type="number"
+                                        step="1" 
+                                        min="1"
+                                        placeholder="0"
+                                        required
+                                        value="${currentTempAmount}"
+                                        class="block w-full pl-10 pr-12 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                                    >
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+                                        <span class="text-gray-500 sm:text-sm">Rs</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button
+                                id="submitBtn"
+                                type="submit"
+                                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-lg text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-transform transform active:scale-95"
+                            >
+                                ${submitButtonText}
                             </button>
-                        </td>
-                    `;
-                    itemList.appendChild(newRow);
+                        </form>
+                    </div>
+
+                    <!-- Transaction History -->
+                    <div class="w-full bg-white p-6 rounded-xl shadow-xl">
+                        <h3 class="text-2xl font-semibold text-gray-800 mb-4 border-b pb-2">Transaction History</h3>
+                        <div class="max-h-96 overflow-y-auto scroll-history space-y-3">
+                            ${renderHistory()}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Re-attach event listeners after rendering
+            attachEventListeners();
+        };
+
+        // --- Event Handlers ---
+
+        const handleTypeChange = (newType) => {
+            transactionType = newType;
+            renderApp(); // Re-render to update button styles and submit text
+        };
+
+        const handleAddTransaction = async (e) => {
+            e.preventDefault();
+
+            if (!db || !userId) {
+                return setError("Database not ready. Please wait for authentication.");
+            }
+
+            const form = e.target;
+            const amountInput = form.querySelector('#amount');
+            const descriptionInput = form.querySelector('#description');
+            
+            // Since we removed decimals, we treat this as an integer, but parseFloat is safer than parseInt
+            const numAmount = parseFloat(amountInput.value); 
+            const description = descriptionInput.value.trim();
+
+            if (isNaN(numAmount) || numAmount <= 0 || !Number.isInteger(numAmount)) {
+                return setError("Please enter a valid whole number amount greater than zero.");
+            }
+            if (!description || description === 'Select a category...' || description === 'Transaction description...') {
+                return setError("Please select a valid description/category for the transaction.");
+            }
+            
+            // Clear previous error message
+            setError(null);
+
+            const newTransaction = {
+                description: description,
+                amount: numAmount,
+                type: transactionType,
+                createdAt: serverTimestamp(),
+            };
+
+            // Disable form during submission
+            const submitButton = form.querySelector('#submitBtn');
+            const originalText = submitButton.textContent;
+            submitButton.disabled = true;
+            submitButton.textContent = 'Saving...';
+            
+            try {
+                const transactionsColRef = collection(db, getCollectionPath());
+                await addDoc(transactionsColRef, newTransaction);
+                
+                // Clear form fields in the DOM immediately
+                amountInput.value = '';
+                descriptionInput.value = ''; // Clears the selected value
+                
+                // Reset transactionType back to expense if the first transaction was just completed
+                if (transactions.length === 0 && transactionType === 'income') {
+                     transactionType = 'expense';
+                }
+                
+                // renderApp() will be called by the onSnapshot listener, which refreshes the state
+            } catch (e) {
+                console.error("Error adding document: ", e);
+                setError(`Failed to save transaction: ${e.message}.`);
+            } finally {
+                // Re-enable button after operation (even if onSnapshot hasn't fired yet)
+                submitButton.disabled = false;
+                submitButton.textContent = originalText; 
+            }
+        };
+
+        const attachEventListeners = () => {
+            const form = document.getElementById('transactionForm');
+            if (form) {
+                // Submit handler
+                form.onsubmit = handleAddTransaction;
+
+                // Type selector handlers
+                document.querySelectorAll('.type-selector').forEach(button => {
+                    button.onclick = (e) => handleTypeChange(e.currentTarget.dataset.type);
                 });
             }
-        }
-
-        // Initialize the app on load: Load data then render
-        window.onload = function() {
-            loadProducts();
-            renderProductList();
         };
+
+        // --- Initial Load ---
+        window.addEventListener('load', initializeFirebase);
+
     </script>
 </body>
 </html>
